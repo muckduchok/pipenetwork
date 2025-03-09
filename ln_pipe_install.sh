@@ -1,7 +1,7 @@
 if ! command -v curl &> /dev/null; then
     sudo apt update -y
     sudo apt install curl -y
-f
+fi
 
 WALLET=$(cd $HOME/pipenetwork && cat wallet_address.txt)
 RAM=$(cd $HOME/pipenetwork && cat ram_amount.txt)
