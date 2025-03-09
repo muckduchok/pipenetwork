@@ -14,7 +14,7 @@ curl -o $HOME/pipenetwork/pop https://dl.pipecdn.app/v0.2.8/pop
 chmod +x $HOME/pipenetwork/pop
 $HOME/pipenetwork/pop --refresh
 
-echo -e "ram=$RAM\nmax-disk=$DISK\ncache-dir=$HOME/pipenetwork/download_cache\npubKey=$WALLET" > pipenetwork/.env
+echo -e "ram=$RAM\nmax-disk=$DISK\ncache-dir=$HOME/pipenetwork/download_cache\npubKey=$WALLET" > $HOME/pipenetwork/.env
 cd $HOME/pipenetwork && sudo ./pop --signup-by-referral-route 915b43ddffb7a015
 
 sudo tee /etc/systemd/system/pipe-pop.service > /dev/null << EOF
