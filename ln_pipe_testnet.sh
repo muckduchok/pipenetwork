@@ -21,20 +21,24 @@ sudo iptables -I INPUT -p tcp --dport 443 -j ACCEPT
 sudo iptables -I INPUT -p tcp --dport 80 -j ACCEPT
 sudo sh -c "iptables-save > /etc/iptables/rules.v4"
 
-INVITE_CODE=$(cat ../pipe_invite_code.txt)
-NODE_NAME=$(cat ../pipe_node_name.txt)
-USERNAME=$(cat ../pipe_username.txt)
-TELEGRAM=$(cat ../pipe_telegram.txt)
-DISCORD=$(cat ../pipe_discord.txt)
-WEBSITE=$(cat ../pipe_website.txt)
-EMAIL=$(cat ../pipe_email.txt)
-SOLANA_PUBKEY=$(cat ../pipe_solana_pubkey.txt)
-RAM_GB=$(cat ../pipe_ram.txt)
-DISK_GB=$(cat ../pipe_disk.txt)
+mkdir pipe_files
+
+INVITE_CODE=$(cat pipe_files/pipe_invite_code.txt)
+NODE_NAME=$(cat pipe_files/pipe_node_name.txt)
+USERNAME=$(cat pipe_files/pipe_username.txt)
+TELEGRAM=$(cat pipe_files/pipe_telegram.txt)
+DISCORD=$(cat pipe_files/pipe_discord.txt)
+WEBSITE=$(cat pipe_files/pipe_website.txt)
+EMAIL=$(cat pipe_files/pipe_email.txt)
+SOLANA_PUBKEY=$(cat pipe_files/pipe_solana_pubkey.txt)
+RAM_GB=$(cat pipe_files/pipe_ram.txt)
+DISK_GB=$(cat pipe_files/pipe_disk.txt)
 COUNTRY=$(curl -s http://ip-api.com/json | jq -r '.country')
 CITY=$(curl -s http://ip-api.com/json | jq -r '.city')
 LOCATION="$CITY, $COUNTRY"
 RAM_MB=$(( RAM_GB * 1024 ))
+
+cd..
 
 sudo mkdir -p /opt/popcache && cd /opt/popcache
 
@@ -83,3 +87,37 @@ if systemctl list-unit-files --type=service | grep -q '^apache2\.service'; then
     sudo systemctl disable apache2
   fi
 fi
+
+cat > Dockerfile << EOL
+FROM ubuntu:24.04
+
+# Install dependensi dasar
+RUN apt update && apt install -y \\
+    ca-certificates \\
+    curl \\
+    libssl-dev \\
+    && rm -rf /var/lib/apt/lists/*
+
+# Buat direktori untuk pop
+WORKDIR /opt/popcache
+
+# Salin file konfigurasi & binary dari host
+COPY pop .
+COPY config.json .
+
+# Berikan izin eksekusi
+RUN chmod +x ./pop
+
+# Jalankan node
+CMD ["./pop", "--config", "config.json"]
+EOL
+
+docker build -t popnode .
+cd ~
+
+docker run -d \
+  --name popnode \
+  -p 80:80 \
+  -p 443:443 \
+  --restart unless-stopped \
+  popnode
