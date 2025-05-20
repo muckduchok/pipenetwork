@@ -3,15 +3,9 @@ sudo systemctl disable pipe-pop
 sudo rm /etc/systemd/system/pipe-pop.service
 sudo systemctl daemon-reload
 sleep 1
-
 rm -rf $HOME/pipenetwork
 
-sudo apt update && sudo apt install -y iptables
-sudo apt update && sudo apt install -y docker.io
 sudo usermod -aG docker "$USER"
-sudo apt-get update && sudo apt install -y libssl-dev ca-certificates jq
-sudo apt update && sudo apt install -y iptables-persistent
-
 sudo fuser -k 443/tcp
 sleep 5
 sudo fuser -k 80/tcp
