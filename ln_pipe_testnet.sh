@@ -15,8 +15,6 @@ sudo iptables -I INPUT -p tcp --dport 443 -j ACCEPT
 sudo iptables -I INPUT -p tcp --dport 80 -j ACCEPT
 sudo sh -c "iptables-save > /etc/iptables/rules.v4"
 
-mkdir pipe_files
-
 INVITE_CODE=$(cat pipe_files/pipe_invite_code.txt)
 NODE_NAME=$(cat pipe_files/pipe_node_name.txt)
 USERNAME=$(cat pipe_files/pipe_username.txt)
@@ -31,8 +29,6 @@ COUNTRY=$(curl -s http://ip-api.com/json | jq -r '.country')
 CITY=$(curl -s http://ip-api.com/json | jq -r '.city')
 LOCATION="$CITY, $COUNTRY"
 RAM_MB=$(( RAM_GB * 1024 ))
-
-cd..
 
 sudo mkdir -p /opt/popcache && cd /opt/popcache
 
