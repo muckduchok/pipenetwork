@@ -15,6 +15,11 @@ sudo iptables -I INPUT -p tcp --dport 443 -j ACCEPT
 sudo iptables -I INPUT -p tcp --dport 80 -j ACCEPT
 sudo sh -c "iptables-save > /etc/iptables/rules.v4"
 
+sudo swapoff /swapfile
+sudo fallocate -l 16G /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+
 INVITE_CODE=$(cat pipe_files/pipe_invite_code.txt)
 NODE_NAME=$(cat pipe_files/pipe_node_name.txt)
 USERNAME=$(cat pipe_files/pipe_username.txt)
